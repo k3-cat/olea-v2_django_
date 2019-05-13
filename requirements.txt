@@ -1,0 +1,9 @@
+django[argon2]~=2.2
+djangorestframework
+# pg
+psycopg2
+# detect file type
+python-magic
+# audio info
+pydub
+rules
