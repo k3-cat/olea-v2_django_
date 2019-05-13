@@ -1,8 +1,9 @@
 from hashlib import sha3_256
+
+import magic
 from django.conf import settings
 from rest_framework import status, viewsets
 from rest_framework.response import Response
-import magic
 
 from europaea import files
 

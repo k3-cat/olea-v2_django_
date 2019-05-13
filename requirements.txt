@@ -4,6 +4,7 @@ djangorestframework
 psycopg2
 # detect file type
 python-magic
+python-magic-bin
 # audio info
 pydub
 rules
