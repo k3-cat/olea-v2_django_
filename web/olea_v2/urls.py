@@ -1,14 +1,19 @@
+from django.urls import path
 from rest_framework import routers
-from users.views import UserAPIViewSet
+
+from users.views import UserAPIView, UserNAPIView
 from works.views import WorkAPIViewSet
-from projects.views import ProjectAPIViewSet
+from projects.views import ProjectAPIView, ProjectNAPIView
 from storages.views import StorageAPIViewSet
+from o3o_auth.views import login_views
 
 router = routers.DefaultRouter()
 
-router.register(r'users', UserAPIViewSet)
-router.register(r'projects', ProjectAPIViewSet)
+router.register(r'users', UserAPIView)
+router.register(r'users_', UserNAPIView)
+router.register(r'projects', ProjectAPIView)
+router.register(r'projects_', ProjectNAPIView)
 router.register(r'works', WorkAPIViewSet)
 router.register(r'storages', StorageAPIViewSet)
 
-urlpatterns = router.get_urls()
+urlpatterns = router.get_urls() + [path('auth/login', login_views)]

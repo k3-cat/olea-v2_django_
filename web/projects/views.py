@@ -1,11 +1,25 @@
-from rest_framework import viewsets, status
+from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
 
 from .models import Project
-from .serializers import ProjectSerializer
+from .serializers import ProjectNSerializer, ProjectSerializer
 
 
-class ProjectAPIViewSet(viewsets.ModelViewSet):
+class ProjectNAPIView(mixins.CreateModelMixin,
+                      viewsets.GenericViewSet): # yapf: disable
+    queryset = Project.objects.all()
+    lookup_field = 'pid'
+    serializer_class = ProjectNSerializer
+
+    def create(self, request):
+        # if admin
+        return super().create(request)
+
+
+class ProjectAPIView(mixins.ListModelMixin,
+                     mixins.RetrieveModelMixin,
+                     mixins.UpdateModelMixin,
+                     viewsets.GenericViewSet): # yapf: disable
     queryset = Project.objects.all()
     lookup_field = 'pid'
     serializer_class = ProjectSerializer
@@ -18,10 +32,6 @@ class ProjectAPIViewSet(viewsets.ModelViewSet):
         # if admin or user
         pass
 
-    def create(self, request):
-        # if admin
-        return super().create(request)
-
     def update(self, request, pid=None):
         # if admin or user
         # if admin check name, group
@@ -29,7 +39,3 @@ class ProjectAPIViewSet(viewsets.ModelViewSet):
 
     def partial_update(self, request, pid=None):
         return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
-
-    def destroy(self, request, pid=None):
-        # if super admin
-        return super().destory(request, pid=pid)

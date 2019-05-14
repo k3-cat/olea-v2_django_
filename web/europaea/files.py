@@ -3,10 +3,10 @@ from pydub import AudioSegment
 
 
 def create_if_not_exist(file_dir):
-    dir_ = os.path.dirnamefile_dir
-    if os.path.existsdir_:
+    dir_ = os.path.dirname(file_dir)
+    if os.path.exists(dir_):
         return
-    os.mkdirdir_
+    os.mkdir(dir_)
 
 def get_audio_info(file_dir, mime):
     sound = AudioSegment.from_file(file_dir, format=mime.replace('audio/', ''))

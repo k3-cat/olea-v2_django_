@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres import fields as pg_fields
 
 from europaea.id import generate_id
 
@@ -50,4 +51,4 @@ class Progress(models.Model):
     d6_start = models.DateTimeField(blank=True, null=True)
     d7_start = models.DateTimeField(blank=True, null=True)
 
-    metadata = models.TextField()  # jsonfield
+    metadata = pg_fields.JSONField(default=dict)

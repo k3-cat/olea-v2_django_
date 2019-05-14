@@ -19,6 +19,8 @@ class User(models.Model):
     cancelled_count = models.IntegerField(default=0)
     last_access = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=False)
+    msg_box = pg_fields.ArrayField(models.CharField(max_length=12), default=list)
+    tasks = pg_fields.ArrayField(models.CharField(max_length=12), default=list)
 
     USERNAME_FIELD = 'name'
     REQUIRED_FIELDS = []
