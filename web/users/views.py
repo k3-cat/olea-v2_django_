@@ -19,15 +19,14 @@ class UserAPIView(mixins.RetrieveModelMixin,
         return super().retrieve(request, uid=uid)
 
     def update(self, request, uid=None):
-        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
         # if admin or user
+        return super().update(request, uid=uid)
 
     def partial_update(self, request, uid=None):
         return super().partial_update(request, uid=uid)
 
 
-class UserNAPIView(mixins.ListModelMixin,
-                   mixins.CreateModelMixin,
+class UserNAPIView(mixins.CreateModelMixin,
                    mixins.UpdateModelMixin,
                    viewsets.GenericViewSet): # yapf: disable
     queryset = User.objects.all()
@@ -41,7 +40,7 @@ class UserNAPIView(mixins.ListModelMixin,
 
     def update(self, request, uid=None):
         # if admin
-        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
+        return super().update(request, uid=uid)
 
     def partial_update(self, request, uid=None):
         return super().partial_update(request, uid=uid)

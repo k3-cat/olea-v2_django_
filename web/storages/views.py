@@ -64,6 +64,10 @@ class StorageAPIViewSet(viewsets.ModelViewSet):
         else:
             return super().retrieve(request, work)
 
+    def perform_create(self, serializer):
+        serializer.save(work=self.request.data.get('work'),
+                        datafile=self.request.data.get('file'))
+
     def retrieve(self, request, work=None):
         # if admin or user uploaded or spec group
         return super().retrieve(request, work)

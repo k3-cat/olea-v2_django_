@@ -6,7 +6,7 @@ from .serializers import ProjectNSerializer, ProjectSerializer
 
 
 class ProjectNAPIView(mixins.CreateModelMixin,
-                      viewsets.GenericViewSet): # yapf: disable
+                      viewsets.GenericViewSet):  # yapf: disable
     queryset = Project.objects.all()
     lookup_field = 'pid'
     serializer_class = ProjectNSerializer
@@ -30,7 +30,7 @@ class ProjectAPIView(mixins.ListModelMixin,
 
     def retrieve(self, request, pid=None):
         # if admin or user
-        pass
+        return super().retrieve(request, pid)
 
     def update(self, request, pid=None):
         # if admin or user

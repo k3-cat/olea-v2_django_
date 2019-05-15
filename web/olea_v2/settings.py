@@ -70,7 +70,7 @@ WSGI_APPLICATION = 'olea_v2.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'olea-db',
+        'NAME': 'olea-br',
         'USER': 'olea_v2',
         'PASSWORD': '4YO7s9cIHhuRMrjTKRBD5Smn',
         'HOST': '127.0.0.1',
