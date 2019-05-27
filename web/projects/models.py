@@ -6,7 +6,7 @@ from europaea.id import generate_id
 
 
 class Project(models.Model):
-    pid = models.CharField(max_length=7, primary_key=True)
+    pid = models.CharField(max_length=8, primary_key=True)
     title = models.CharField(max_length=50, unique=True)
     doc_url = models.CharField(max_length=30)
     note = models.TextField(default='')
@@ -17,8 +17,10 @@ class Project(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.pid:
-            self.pid = generate_id(7)
+            self.pid = generate_id(8)
             super().save(*args, **kwargs)
+            Progress._default_manager.create(project=self)
+            return None
         return super().save(*args, **kwargs)
 
 
@@ -33,9 +35,9 @@ class Progress(models.Model):
     d6_state = models.IntegerField(choices=PROGRESS_STATE, default=0)
     d7_state = models.IntegerField(choices=PROGRESS_STATE, default=-1)
 
-    d4_start = models.DateTimeField(blank=True)
-    d5_start = models.DateTimeField(blank=True)
-    d6_start = models.DateTimeField(blank=True)
-    d7_start = models.DateTimeField(blank=True)
+    d4_start = models.DateTimeField(blank=True, null=True)
+    d5_start = models.DateTimeField(blank=True, null=True)
+    d6_start = models.DateTimeField(blank=True, null=True)
+    d7_start = models.DateTimeField(blank=True, null=True)
 
     roles = pg_fields.JSONField(default=dict)

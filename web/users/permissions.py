@@ -9,6 +9,7 @@ class UserPermissions(permissions.BasePermission):
             return True
         return False
 
+
 class UserNPermissions(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         print(request.user.groups)

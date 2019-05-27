@@ -1,4 +1,5 @@
-cd $PSScriptRoot/..
-& venv/Scripts/Activate.ps1
-python web/manage.py makemigrations
-python web/manage.py migrate
+Set-Location $PSScriptRoot/..
+Remove-Item web/projects/migrations/0001_initial.py
+Remove-Item web/users/migrations/0001_initial.py
+Remove-Item web/works/migrations/0001_initial.py
+Remove-Item web/o3o_auth/migrations/0001_initial.py

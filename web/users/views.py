@@ -1,46 +1,45 @@
 from rest_framework import mixins, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .models import User
+from .permissions import UserNPermissions, UserPermissions
 from .serializers import UserNSerializer, UserSerializer
-from .permissions import UserPermissions, UserNPermissions
 
 
-class UserAPIView(mixins.RetrieveModelMixin,
+class UserAPIView(mixins.CreateModelMixin,
                   mixins.UpdateModelMixin,
+                  mixins.RetrieveModelMixin,
                   viewsets.GenericViewSet): # yapf: disable
     queryset = User.objects.all()
     lookup_field = 'uid'
-    serializer_class = UserSerializer
+    lookup_value_regex = '[A-Za-z0-9_-]{5}'
     # permission_classes = (UserPermissions,)
+
+    def get_serializer_class(self):
+        if self.action in ('create', 'n_update'):
+            return UserNSerializer
+        return UserSerializer
 
     def retrieve(self, request, uid=None):
         # if admin or user
         return super().retrieve(request, uid=uid)
 
     def update(self, request, uid=None):
-        # if admin or user
         return super().update(request, uid=uid)
 
     def partial_update(self, request, uid=None):
-        return super().partial_update(request, uid=uid)
+        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
 
-
-class UserNAPIView(mixins.CreateModelMixin,
-                   mixins.UpdateModelMixin,
-                   viewsets.GenericViewSet): # yapf: disable
-    queryset = User.objects.all()
-    lookup_field = 'uid'
-    serializer_class = UserNSerializer
-    # permission_classes = (UserNPermissions,)
-
-    def create(self, request):
+    def n_create(self, request):
         # if admin
         return super().create(request)
 
-    def update(self, request, uid=None):
-        # if admin
-        return super().update(request, uid=uid)
-
-    def partial_update(self, request, uid=None):
-        return super().partial_update(request, uid=uid)
+    @action(detail=True, methods=['post'])
+    def n_update(self, request, uid=None):
+        # if admins
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)

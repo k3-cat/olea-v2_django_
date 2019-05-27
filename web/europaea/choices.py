@@ -18,9 +18,7 @@ DEPARTMENT = (
 STORAGE_TYPE = (
     (0, 'none'),
     (10, 'folder'),
-    (50, 'audio-wav'),
-    (51, 'audio-flac'),
-    (52, 'audio-mp3'),
+    (50, 'audio-flac'),
     (60, 'picture-png'),
     (70, 'video-mkv'),
     (71, 'video-mp4'),

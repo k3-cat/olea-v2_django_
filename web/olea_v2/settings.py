@@ -26,7 +26,7 @@ SECRET_KEY = 'f=md%7padj=&3ibwfn$c2hwp3+slud=zc=h4@3cq-85)*bu$mk'
 DEBUG = True
 
 
-ADMINS = [('K3', 'p-ix@outlook.com')]
+ADMINS = [('K3', 'x-rk@outlook.com')]
 
 ALLOWED_HOSTS = ['*']
 
@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'o3o_auth',
     'projects',
     'works',
-    'storages'
 ]
 
 MIDDLEWARE = [

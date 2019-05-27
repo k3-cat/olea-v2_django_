@@ -1,32 +1,36 @@
-from django.db import models
 from django.contrib.postgres import fields as pg_fields
+from django.core.exceptions import ValidationError
+from django.db import models
 
 from europaea.id import generate_id
-
-from .hashers import check_password, make_password
+from europaea.urwid import get_width
+from users.hashers import check_password, make_password
 
 
 class User(models.Model):
     uid = models.CharField(max_length=5, primary_key=True)
     password = models.CharField(max_length=128)
     name = models.CharField(max_length=20, unique=True)
-    email = models.EmailField(blank=True, null=True, max_length=40)
-    qq = models.CharField(blank=True, null=True, max_length=11)
-    line = models.CharField(blank=True, null=True, max_length=30)
+    email = models.EmailField(blank=True, max_length=40)
+    qq = models.CharField(blank=True, max_length=11)
+    line = models.CharField(blank=True, max_length=30)
     groups = pg_fields.ArrayField(models.IntegerField(),
                                   default=list,
                                   size=5)
     cancelled_count = models.IntegerField(default=0)
-    last_access = models.DateTimeField(auto_now=True)
+    last_access = models.DateTimeField(blank=True, null=True)
     is_active = models.BooleanField(default=False)
-    msg_box = pg_fields.ArrayField(models.CharField(max_length=12), default=list)
-    tasks = pg_fields.ArrayField(models.CharField(max_length=12), default=list)
 
     USERNAME_FIELD = 'name'
     REQUIRED_FIELDS = []
 
     is_anonymous = False
     is_authenticated = True
+
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        if get_width(name) > 16:
+            raise ValidationError('the name is too long')
 
     def save(self, *args, **kwargs):
         if not self.uid:
@@ -36,11 +40,11 @@ class User(models.Model):
         return super(User, self).save(*args, **kwargs)
 
     def get_full_name(self):
-        full_name = f'{self.name}({self.uid})'
-        return full_name
+        return f'{self.name}({self.uid})'
 
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
+        # del token
         return True
 
     def check_password(self, raw_password):

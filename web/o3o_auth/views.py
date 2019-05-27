@@ -1,11 +1,12 @@
 import datetime
 
-from rest_framework.decorators import api_view
+from django.db.models.functions import Now
 from rest_framework import status
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import Token
-from .backends import O3oBackend
+from o3o_auth.backends import O3oBackend
+from o3o_auth.models import Token
 
 
 def authenticate(request=None, **credentials):
@@ -61,6 +62,6 @@ def refresh_view(request):
     token_ = request.data['token']
     token = Token.objects.get(key=token_)
 
-    shifted_now = datetime.datetime.utcnow() - datetime.timedelta(days=5)
+    shifted_now = Now() - datetime.timedelta(days=5)
     if token.created < shifted_now < token.created + datetime.timedelta(days=4):
         token.save()

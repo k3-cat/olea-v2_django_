@@ -1,29 +1,35 @@
 import os
-from pydub import AudioSegment
+import shutil
+
+from django.conf import settings
 
 
-def create_if_not_exist(file_dir):
-    dir_ = os.path.dirname(file_dir)
+def get_file_dir(pid=None, work=None):
+    if pid:
+        return f'{settings.STOEAGE_DIR}/1/{pid}/'
+    if work:
+        return f'{settings.STOEAGE_DIR}/1/{work.project}/'
+
+
+def get_file_name(work):
+    return f'{work.dep}-{work.role}-{work.user}'
+
+
+def get_file_path(work):
+    dir_ = get_file_dir(work=work)
+    name = get_file_name(work)
+    return f'{dir_}/{name}'
+
+
+def create_if_not_exist(pid):
+    dir_ = get_file_dir(pid)
     if os.path.exists(dir_):
         return
     os.mkdir(dir_)
 
-def get_audio_info(file_dir, mime):
-    sound = AudioSegment.from_file(file_dir, format=mime.replace('audio/', ''))
-    if sound.channels < 2:
-        raise Exception
-    metadata = {
-        'frame_rate': sound.frame_rate,
-        'frame_width': sound.frame_width,
-        'duration': sound.duration_seconds / 1000
-    }
-    return metadata
-
 
 MIME_TYPE_ID = {
-    'audio/wav': 'audio-wav',
     'audio/flac': 'audio-flac',
-    'audio/mp3': 'audio-mp3',
     'image/png': 'picture-png',
     'video/x-matroska': 'video-mkv',
     'video/mp4': 'video-mp4'
@@ -31,3 +37,9 @@ MIME_TYPE_ID = {
 
 def mime_to_type_id(mime):
     return MIME_TYPE_ID[mime]
+
+
+def safe_delete(work):
+    dir_ = get_file_path(work=work)
+    name = get_file_name(work)
+    shutil.move(dir_, f'{settings.STOEAGE_DIR}/0/{name}')

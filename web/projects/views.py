@@ -1,28 +1,30 @@
 from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
 
-from .models import Project
-from .serializers import ProjectNSerializer, ProjectSerializer
+from projects.models import Project
+from projects.serializers import (ProjectNSerializer, ProjectSerializer,
+                                  ProjectUSerializer)
 
 
-class ProjectNAPIView(mixins.CreateModelMixin,
-                      viewsets.GenericViewSet):  # yapf: disable
-    queryset = Project.objects.all()
-    lookup_field = 'pid'
-    serializer_class = ProjectNSerializer
-
-    def create(self, request):
-        # if admin
-        return super().create(request)
-
-
-class ProjectAPIView(mixins.ListModelMixin,
+class ProjectAPIView(mixins.CreateModelMixin,
+                     mixins.ListModelMixin,
                      mixins.RetrieveModelMixin,
                      mixins.UpdateModelMixin,
                      viewsets.GenericViewSet): # yapf: disable
     queryset = Project.objects.all()
     lookup_field = 'pid'
-    serializer_class = ProjectSerializer
+    lookup_value_regex = '[A-Za-z0-9_-]{8}'
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return ProjectNSerializer
+        if self.action == 'update':
+            return ProjectUSerializer
+        return ProjectSerializer
+
+    def create(self, request):
+        # if admin
+        return super().create(request)
 
     def list(self, request):
         # admin

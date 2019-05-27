@@ -1,10 +1,11 @@
 import datetime
 
 from django.core.cache import cache
+from django.db.models.functions import Now
 from rest_framework import HTTP_HEADER_ENCODING, exceptions
 from rest_framework.authentication import BaseAuthentication
 
-from .models import Token
+from o3o_auth.models import Token
 
 
 def get_authorization_header(request):
@@ -50,8 +51,7 @@ class TokenAuthentication(BaseAuthentication):
         if not token.user.is_active:
             raise exceptions.AuthenticationFailed('The user is deactived.')
 
-        now = datetime.datetime.utcnow()
-        if token.created < now - datetime.timedelta(days=180):
+        if token.created < Now() - datetime.timedelta(days=180):
             raise exceptions.AuthenticationFailed('This token is expired.')
 
         cache.set(token_cache, token.user, 86400*5)
