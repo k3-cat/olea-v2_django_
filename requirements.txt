@@ -1,10 +1,16 @@
-django[argon2]~=2.2
+django[argon2]
 djangorestframework
-# pg
+#object level permission
+djangorestframework-composed-permissions
+# filter
+django-filter
+# pgsql
 psycopg2
 # detect file type
 python-magic
 python-magic-bin
 # audio info
 pydub
-rules
+# crawler
+bs4
+lxml

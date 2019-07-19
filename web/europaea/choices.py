@@ -8,14 +8,16 @@ WORKSTATE = (
 )
 
 DEPARTMENT = (
-    (40, 'writing'),
+    (10, 'developing'),
+    (30, 'writing'),
+    (40, 'translating'),
     (50, 'reading'),
     (51, 'reading_eng'),
     (60, 'painting'),
     (70, 'post-production')
 )
 
-STORAGE_TYPE = (
+FILE_TYPE = (
     (0, 'none'),
     (10, 'folder'),
     (50, 'audio-flac'),

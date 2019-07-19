@@ -17,9 +17,13 @@ class User(models.Model):
     groups = pg_fields.ArrayField(models.IntegerField(),
                                   default=list,
                                   size=5)
+    note = models.TextField(default='')
     cancelled_count = models.IntegerField(default=0)
     last_access = models.DateTimeField(blank=True, null=True)
     is_active = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ('name',)
 
     USERNAME_FIELD = 'name'
     REQUIRED_FIELDS = []
@@ -32,15 +36,15 @@ class User(models.Model):
         if get_width(name) > 16:
             raise ValidationError('the name is too long')
 
+    def is_nimda(self):
+        return -626 in self.groups
+
     def save(self, *args, **kwargs):
         if not self.uid:
             self.uid = generate_id(5)
             if self.email and (self.qq or self.line):
                 self.is_active = True
-        return super(User, self).save(*args, **kwargs)
-
-    def get_full_name(self):
-        return f'{self.name}({self.uid})'
+        return super().save(*args, **kwargs)
 
     def set_password(self, raw_password):
         self.password = make_password(raw_password)

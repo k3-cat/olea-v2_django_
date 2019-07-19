@@ -51,7 +51,6 @@ class ProjectNSerializer(serializers.ModelSerializer):
         eng = validated_data.pop('eng')
         project = super().create(validated_data)
         project.progress.roles = dict([
-            ('40', ['主笔']),
             ('60', []),
             ('70', ['FA']),
             ] + [('50', ['FA']) if not eng else('51', ['FA'])])

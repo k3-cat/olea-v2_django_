@@ -10,7 +10,7 @@ class Token(models.Model):
                                 related_name='auth_token',
                                 on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
-    last_pulse = models.DateTimeField(auto_now=True)
+    last_pulse = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
         if not self.key:

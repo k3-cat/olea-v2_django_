@@ -19,7 +19,7 @@ class Project(models.Model):
         if not self.pid:
             self.pid = generate_id(8)
             super().save(*args, **kwargs)
-            Progress._default_manager.create(project=self)
+            Progress.objects.create(project=self)
             return None
         return super().save(*args, **kwargs)
 
@@ -30,12 +30,10 @@ class Progress(models.Model):
                                    on_delete=models.CASCADE,
                                    primary_key=True)
 
-    d4_state = models.IntegerField(choices=PROGRESS_STATE, default=0)
-    d5_state = models.IntegerField(choices=PROGRESS_STATE, default=-1)
+    d5_state = models.IntegerField(choices=PROGRESS_STATE, default=0)
     d6_state = models.IntegerField(choices=PROGRESS_STATE, default=0)
-    d7_state = models.IntegerField(choices=PROGRESS_STATE, default=-1)
+    d7_state = models.IntegerField(choices=PROGRESS_STATE, default=0)
 
-    d4_start = models.DateTimeField(blank=True, null=True)
     d5_start = models.DateTimeField(blank=True, null=True)
     d6_start = models.DateTimeField(blank=True, null=True)
     d7_start = models.DateTimeField(blank=True, null=True)

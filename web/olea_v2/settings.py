@@ -12,19 +12,14 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from olea_v2.secret import DB_PWD, SECRET_KEY, EMAIL_HOST_PASSWORD
+
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# >----[ SECRET_KEY has been removed ]----<
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'f=md%7padj=&3ibwfn$c2hwp3+slud=zc=h4@3cq-85)*bu$mk'
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 
 ADMINS = [('K3', 'x-rk@outlook.com')]
 
@@ -32,18 +27,21 @@ ALLOWED_HOSTS = ['*']
 
 AUTH_USER_MODEL = 'users.User'
 
-# Application definition
 
+# Application definition
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rules',
+    'restfw_composed_permissions',
+    'django_filters',
     'users',
     'o3o_auth',
     'projects',
     'works',
+    'commits',
+    'volts',
 ]
 
 MIDDLEWARE = [
@@ -53,46 +51,53 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'olea_v2.urls'
-
+WSGI_APPLICATION = 'olea_v2.wsgi.application'
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES':
-    ('o3o_auth.auth.TokenAuthentication', ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'o3o_auth.authentication.TokenAuthentication',),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',),
+        #'rest_framework.permissions.IsAuthenticated',)
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend', ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer', )
 }
-
-WSGI_APPLICATION = 'olea_v2.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'olea-br',
+        'NAME': 'blue_ring',
         'USER': 'olea_v2',
-        'PASSWORD': '4YO7s9cIHhuRMrjTKRBD5Smn',
+        'PASSWORD': DB_PWD,
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
 }
 
 
+# Email
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'olea_europaea@outlook.com'
+# >----[ EMAIL_HOST_PASSWORD has been removed ]----<
+EMAIL_SUBJECT_PREFIX = '[olea v2] '
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
-
 STATIC_URL = '/static/'
