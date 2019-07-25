@@ -4,8 +4,8 @@ from commits.serializers import Download, Upload
 
 
 class CommitsView(mixins.CreateModelMixin,
-                   mixins.RetrieveModelMixin,
-                   viewsets.GenericViewSet):  # yapf: disable
+                  mixins.RetrieveModelMixin,
+                  viewsets.GenericViewSet):  # yapf: disable
 
     lookup_field = 'work'
     lookup_value_regex = '[A-Za-z0-9_-]{12}'

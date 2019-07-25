@@ -3,8 +3,8 @@ from rest_framework import filters, mixins, status, viewsets
 from rest_framework.response import Response
 
 from users.models import User
-from users.permissions import UserNPermissions, UserPermissions
-from users.serializers import UserNSerializer, UserSerializer
+from users.permissions import UserPermissions
+from users.serializers import UserESerializer, UserSerializer
 
 
 class UserListView(mixins.ListModelMixin,
@@ -26,40 +26,20 @@ class UserListView(mixins.ListModelMixin,
         return queryset
 
 
-class UserView(mixins.CreateModelMixin,
-               mixins.UpdateModelMixin,
+class UserView(mixins.UpdateModelMixin,
                mixins.RetrieveModelMixin,
                viewsets.GenericViewSet): # yapf: disable
     lookup_field = 'uid'
-    lookup_value_regex = '[A-Za-z0-9_-]{5}'
+    serializer_class = UserESerializer
+    lookup_value_regex = '[A-Za-z0-9_-]{6}'
     # permission_classes = (UserPermissions,)
 
     def get_queryset(self):
-        queryset = User.objects.all()
-        if not self.request.user.is_nimda():
-            queryset = queryset.filters(uid=self.request.user.uid)
-        return queryset
-
-    def get_serializer_class(self):
-        if self.action in ('create', 'update'):
-            return UserNSerializer
-        return UserSerializer
+        return User.objects.all().filters(uid=self.request.user.uid)
 
     # def retrieve(self, request, uid=None):
 
-    def update(self, request, uid=None):
-        if not request.user.is_nimda():
-            request.data.pop('name', None)
-            request.data.pop('groups', None)
-        return super().update(request, uid=uid)
+    # def update(self, request, uid=None):
 
     def partial_update(self, request, uid=None):
         return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
-
-    def create(self, request):
-        # if admin
-        return super().create(request)
-
-
-class UserGView():
-    pass

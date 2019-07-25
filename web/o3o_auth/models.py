@@ -13,7 +13,7 @@ class Token(models.Model):
     last_pulse = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        if not self.key:
+        if self._state.adding:
             self.key = generate_id(42)
         return super(Token, self).save(*args, **kwargs)
 

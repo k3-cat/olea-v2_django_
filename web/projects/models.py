@@ -1,14 +1,14 @@
 from django.contrib.postgres import fields as pg_fields
 from django.db import models
 
-from europaea.choices import PROGRESS_STATE
-from europaea.id import generate_id
+from europaea.choices import PROGRESS_STATE, PROJECTS_CATEGORY
 
 
 class Project(models.Model):
-    pid = models.CharField(max_length=8, primary_key=True)
+    pid = models.CharField(max_length=9, primary_key=True)
     title = models.CharField(max_length=50, unique=True)
     doc_url = models.CharField(max_length=30)
+    category = models.IntegerField(choices=PROJECTS_CATEGORY)
     note = models.TextField(default='')
     pics_count = models.IntegerField(default=0)
     words_count = models.IntegerField(default=0)
@@ -16,11 +16,10 @@ class Project(models.Model):
     finish_at = models.DateTimeField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        if not self.pid:
-            self.pid = generate_id(8)
+        if self._state.adding:
             super().save(*args, **kwargs)
             Progress.objects.create(project=self)
-            return None
+            return
         return super().save(*args, **kwargs)
 
 

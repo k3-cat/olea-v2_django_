@@ -34,3 +34,10 @@ PROGRESS_STATE = (
     (2, 'processing'),      # 不缺人但未完成
     (3, 'done'),            # 项目完成
 )
+
+PROJECTS_CATEGORY = (
+    (10, '000_normal'),
+    (11, 'eng_normal'),
+    (20, '000_explain'),
+    (30, '000_story'),
+)

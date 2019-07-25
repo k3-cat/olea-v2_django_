@@ -8,7 +8,7 @@ from users.hashers import check_password, make_password
 
 
 class User(models.Model):
-    uid = models.CharField(max_length=5, primary_key=True)
+    uid = models.CharField(max_length=6, primary_key=True)
     password = models.CharField(max_length=128)
     name = models.CharField(max_length=20, unique=True)
     email = models.EmailField(blank=True, max_length=40)
@@ -40,8 +40,8 @@ class User(models.Model):
         return -626 in self.groups
 
     def save(self, *args, **kwargs):
-        if not self.uid:
-            self.uid = generate_id(5)
+        if self._state.adding:
+            self.uid = generate_id(6)
             if self.email and (self.qq or self.line):
                 self.is_active = True
         return super().save(*args, **kwargs)

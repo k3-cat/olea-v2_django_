@@ -9,10 +9,9 @@ WIDTH = [
 
 
 def get_width(str_):
-    global WIDTH
     width = 0
     for char in str_:
-        if char == 0xe or char == 0xf:
+        if char in (0xe, 0xf):
             continue
         for num, wid in WIDTH:
             if char <= num:

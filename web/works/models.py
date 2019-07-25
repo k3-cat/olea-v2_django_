@@ -21,28 +21,27 @@ class Work(models.Model):
         unique_together = ('project', 'dep', 'role')
 
     def save(self, *args, **kwargs):
-        if not self.wid:
+        if self._state.adding:
             self.wid = generate_id(12)
             if self.dep not in self.user.groups:
                 raise ValidationError(f'user{self.user.uid} not in this department({self.dep})')
-            dep = str(self.dep)
+            dep_0 = self.dep//10
             if dep not in self.project.progress.roles:
                 raise ValidationError(f'department({dep}) does not exist')
             if self.role not in self.project.progress.roles[dep]:
                 raise ValidationError(f'role({self.role}) does not exist')
-            if getattr(self.project.progress, f'd{dep[0]}_state') < 0:
+            if getattr(self.project.progress, f'd{dep_0}_state') < 0:
                 raise ValidationError('keep waiting')
             self.project.progress.roles[dep].remove(self.role)
             if not self.project.progress.roles[dep]:
-                setattr(self.project.progress, f'd{dep[0]}_state', 2)
+                setattr(self.project.progress, f'd{dep_0}_state', 2)
             self.project.progress.save()
         return super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         if self.state != 0:
             raise ValidationError('not allowed to cancell under this state')
-        dep = str(self.dep)
-        self.project.progress.roles[dep].append(self.role)
+        self.project.progress.roles[self.dep//10].append(self.role)
         self.state = -2 if 'force' in kwargs else - 1
         self.note += f'c: {Now()}\n'
         self.project.progress.save()
