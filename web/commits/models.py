@@ -57,6 +57,7 @@ class Commit(models.Model):
     metadata = pg_fields.JSONField(default=dict)
 
     objects = CommitsManager()
+
     class Meta:
         db_table = 'commit'
 

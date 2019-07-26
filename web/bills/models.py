@@ -8,12 +8,18 @@ from europaea.id import generate_id, generate_jid
 fs_ap = FileSystemStorage(location=f'{settings.BASE_DIR}/../file/ap')
 
 
+class ApplicationManager(models.Manager):
+    pass
+
+
 class Application(models.Model):
     wid = models.CharField(max_length=12, primary_key=True)
     user = models.ForeignKey('users.User', on_delete=models.CASCADE)
     reason = models.CharField(max_length=300)
     proof = models.ImageField(storage=fs_ap)
     ammount = models.IntegerField()
+
+    objects = ApplicationManager()
 
     class Meta:
         db_table = 'application'
@@ -25,6 +31,10 @@ class Application(models.Model):
         raise Exception('cannot edit an application after created')
 
 
+class JournalManager(models.Manager):
+    pass
+
+
 class Journal(models.Model):
     jid = models.CharField(max_length=42, primary_key=True)
     debit = models.IntegerField()
@@ -32,6 +42,8 @@ class Journal(models.Model):
     reason = models.CharField(max_length=300)
     pervious = models.CharField(max_length=42)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    objects = JournalManager()
 
     class Meta:
         db_table = 'journal'

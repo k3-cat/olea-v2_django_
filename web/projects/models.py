@@ -36,6 +36,7 @@ class Project(models.Model):
     finish_at = models.DateTimeField(blank=True, null=True)
 
     objects = ProjectManager()
+
     class Meta:
         db_table = 'project'
 

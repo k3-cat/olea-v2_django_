@@ -9,7 +9,11 @@ from users.hashers import check_password, make_password
 
 class UserManager(models.Manager):
     def create(self, name, email, qq, line, group):
-        user = super().create(name=name, email=email, qq=qq, line=line, group=group)
+        user = super().create(name=name,
+                              email=email,
+                              qq=qq,
+                              line=line,
+                              group=group)
         user.uid = generate_id(6)
         user.set_password('OEO')
         if self.email and (self.qq or self.line):
@@ -24,24 +28,21 @@ class User(models.Model):
     email = models.EmailField(blank=True, max_length=40)
     qq = models.CharField(blank=True, max_length=11)
     line = models.CharField(blank=True, max_length=30)
-    groups = pg_fields.ArrayField(models.IntegerField(),
-                                  default=list,
-                                  size=5)
+    groups = pg_fields.ArrayField(models.IntegerField(), default=list, size=5)
     cancelled_count = models.IntegerField(default=0)
     last_access = models.DateTimeField(blank=True, null=True)
     is_active = models.BooleanField(default=False)
 
-    class Meta:
-        db_table = 'c_user'
-        ordering = ('name',)
-
-    objects = UserManager()
-
     USERNAME_FIELD = 'name'
     REQUIRED_FIELDS = []
 
+    objects = UserManager()
     is_anonymous = False
     is_authenticated = True
+
+    class Meta:
+        db_table = 'c_user'
+        ordering = ('name', )
 
     def save(self, *args, **kwargs):
         if get_width(self.name) > 16:
