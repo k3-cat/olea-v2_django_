@@ -2,8 +2,6 @@ import re
 
 from rest_framework import serializers
 
-from bills.models import Apply
-
 
 class AmmountField(serializers.Field):
     def to_representation(self, value):
@@ -26,6 +24,6 @@ class ApplySerializer(serializers.ModelSerializer):
     ammount = AmmountField()
 
     class Meta:
-        model = Apply
+        model = 'bills.Application'
         fields = '__all__'
         read_only_fields = ('aid', )

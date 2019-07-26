@@ -9,3 +9,6 @@ class Volt(models.Model):
                                 on_delete=models.CASCADE)
     reason = models.CharField(max_length=120)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'volt'

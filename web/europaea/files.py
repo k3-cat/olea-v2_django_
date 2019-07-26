@@ -28,15 +28,16 @@ def create_if_not_exist(pid):
     os.mkdir(dir_)
 
 
-MIME_TYPE_ID = {
-    'audio/flac': 'audio-flac',
-    'image/png': 'picture-png',
-    'video/x-matroska': 'video-mkv',
-    'video/mp4': 'video-mp4'
+MIME_FTYPE = {
+    'audio/wav': 51,
+    'audio/flac': 51,
+    'image/png': 61,
+    'video/x-matroska': 71,
+    'video/mp4': 72
 } # yapf: disable
 
-def mime_to_type_id(mime):
-    return MIME_TYPE_ID[mime]
+def mime_to_ftype(mime):
+    return MIME_FTYPE[mime] if mime in MIME_FTYPE else 0
 
 
 def safe_delete(work):

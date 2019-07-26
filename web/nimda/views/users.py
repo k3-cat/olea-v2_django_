@@ -1,7 +1,9 @@
 from rest_framework import mixins, viewsets
 
-from nimda.serializers.users import UserNSerializer
 from users.models import User
+
+from ..serializers.users import UserNSerializer
+
 
 class UserNView(mixins.CreateModelMixin,
                 mixins.UpdateModelMixin,
@@ -9,6 +11,3 @@ class UserNView(mixins.CreateModelMixin,
     queryset = User.objects.all()
     serializer_class = UserNSerializer
     lookup_field = 'uid'
-
-# admin
-#    def create(self, request):

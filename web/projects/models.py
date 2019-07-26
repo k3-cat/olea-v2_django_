@@ -2,6 +2,26 @@ from django.contrib.postgres import fields as pg_fields
 from django.db import models
 
 from europaea.choices import PROGRESS_STATE, PROJECTS_CATEGORY
+from europaea.id import generate_pid
+
+from .info_builder import build_info
+
+
+class ProjectManager(models.Manager):
+    def create(self, base, pub_date, category, ver, ext, note):
+        title, doc_url = build_info(base=base,
+                                    category=category,
+                                    ver=ver,
+                                    ext=ext)
+        project = super().create(title=title,
+                                 doc_url=doc_url,
+                                 category=category,
+                                 note=note)
+        project.pid = generate_pid(base=base,
+                                   pub_date=pub_date,
+                                   category=category,
+                                   ver=ver)
+        return project
 
 
 class Project(models.Model):
@@ -14,6 +34,10 @@ class Project(models.Model):
     words_count = models.IntegerField(default=0)
     audio_length = models.IntegerField(default=0)
     finish_at = models.DateTimeField(blank=True, null=True)
+
+    objects = ProjectManager()
+    class Meta:
+        db_table = 'project'
 
     def save(self, *args, **kwargs):
         if self._state.adding:
@@ -38,3 +62,6 @@ class Progress(models.Model):
     d7_start = models.DateTimeField(blank=True, null=True)
 
     roles = pg_fields.JSONField(default=dict)
+
+    class Meta:
+        db_table = 'progress'

@@ -1,11 +1,5 @@
-import datetime
-
-from django.core.cache import cache
-from django.db.models.functions import Now
 from rest_framework import HTTP_HEADER_ENCODING, exceptions
 from rest_framework.authentication import TokenAuthentication as BaseTokenAuthentication
-
-from o3o_auth.models import Token
 
 
 def get_authorization_header(request):
@@ -22,8 +16,8 @@ def get_authorization_header(request):
 
 
 class TokenAuthentication(BaseTokenAuthentication):
-    keyword = 'O3OToken'
-    model = Token
+    keyword = 'Cybil'
+    model = 'c_auth.Token'
 
     def authenticate_credentials(self, key):
         model = self.get_model()

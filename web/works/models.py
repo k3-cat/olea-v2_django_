@@ -6,6 +6,28 @@ from europaea.choices import DEPARTMENT, WORKSTATE
 from europaea.id import generate_id
 
 
+class WorkManager(models.Manager):
+    def create(self, project, dep, user, role):
+        if dep not in user.groups:
+            raise ValidationError(f'user{user.uid} not in this department({dep})')
+        if dep not in project.progress.roles:
+            raise ValidationError(f'department({dep}) does not exist in this project')
+        if role not in project.progress.roles[dep]:
+            raise ValidationError(f'role({role}) does not exist')
+        if getattr(project.progress, f'd{dep//10}_state') < 0:
+            raise ValidationError(f'department({dep}) still waiting')
+        project.progress.roles[dep].remove(role)
+        if not project.progress.roles[dep]:
+            setattr(project.progress, f'd{dep//10}_state', 2)
+        project.progress.save()
+        work = super().create(wid=generate_id(15),
+                              project=project,
+                              dep=dep,
+                              user=user,
+                              role=role)
+        return work
+
+
 class Work(models.Model):
     wid = models.CharField(max_length=12, primary_key=True)
     project = models.ForeignKey('projects.Project', on_delete=models.CASCADE)
@@ -14,29 +36,14 @@ class Work(models.Model):
     user = models.ForeignKey('users.User', on_delete=models.CASCADE)
     state = models.IntegerField(choices=WORKSTATE, default=0)
     timestamp = models.DateTimeField(auto_now_add=True)
-    note = models.TextField()
+    note = models.TextField(default='')
+
+    objects = WorkManager()
 
     class Meta:
+        db_table = 'work'
         ordering = ('timestamp',)
         unique_together = ('project', 'dep', 'role')
-
-    def save(self, *args, **kwargs):
-        if self._state.adding:
-            self.wid = generate_id(12)
-            if self.dep not in self.user.groups:
-                raise ValidationError(f'user{self.user.uid} not in this department({self.dep})')
-            dep_0 = self.dep//10
-            if dep not in self.project.progress.roles:
-                raise ValidationError(f'department({dep}) does not exist')
-            if self.role not in self.project.progress.roles[dep]:
-                raise ValidationError(f'role({self.role}) does not exist')
-            if getattr(self.project.progress, f'd{dep_0}_state') < 0:
-                raise ValidationError('keep waiting')
-            self.project.progress.roles[dep].remove(self.role)
-            if not self.project.progress.roles[dep]:
-                setattr(self.project.progress, f'd{dep_0}_state', 2)
-            self.project.progress.save()
-        return super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         if self.state != 0:

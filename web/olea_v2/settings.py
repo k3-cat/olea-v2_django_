@@ -101,3 +101,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 STATIC_URL = '/static/'
+AP_URL = '/ap/'
+AP_ROOT = f'{BASE_DIR}/../files/ap/'
+CF_URL = '/cf/'
+CF_ROOT = f'{BASE_DIR}/../files/cf/'

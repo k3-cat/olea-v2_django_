@@ -1,12 +1,10 @@
 from rest_framework import serializers
 
-from works.models import Work
-
 
 # create
 class WorkCSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Work
+        model = 'works.Work'
         fields = ('wid', 'project', 'dep', 'role', 'user')
         read_only_fields = ('wid', )
 
@@ -28,9 +26,15 @@ class WorkDSerializer(serializers.Serializer):
             work.delete()
         return work
 
+    def create(self):
+        pass
+
+    def update(self):
+        pass
+
 
 class WorkSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Work
+        model = 'works.sWork'
         fields = '__all__'
         read_only_fields = fields

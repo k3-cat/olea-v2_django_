@@ -1,7 +1,7 @@
 from pydub import AudioSegment
 
 
-def get_info(file_dir):
+def get_audio_info(file_dir):
     sound = AudioSegment.from_file(file_dir, format='flac')
     metadata = {
         'frame_rate': sound.frame_rate,

@@ -1,7 +1,7 @@
 from users.models import User as UserModel
 
 
-class O3oBackend:
+class CBackend:
     def authenticate(self, request, name=None, password=None):
         try:
             user = UserModel.objects.get(name)

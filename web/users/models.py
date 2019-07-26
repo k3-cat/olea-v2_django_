@@ -7,6 +7,16 @@ from europaea.urwid import get_width
 from users.hashers import check_password, make_password
 
 
+class UserManager(models.Manager):
+    def create(self, name, email, qq, line, group):
+        user = super().create(name=name, email=email, qq=qq, line=line, group=group)
+        user.uid = generate_id(6)
+        user.set_password('OEO')
+        if self.email and (self.qq or self.line):
+            user.is_active = True
+        return user
+
+
 class User(models.Model):
     uid = models.CharField(max_length=6, primary_key=True)
     password = models.CharField(max_length=128)
@@ -17,13 +27,15 @@ class User(models.Model):
     groups = pg_fields.ArrayField(models.IntegerField(),
                                   default=list,
                                   size=5)
-    note = models.TextField(default='')
     cancelled_count = models.IntegerField(default=0)
     last_access = models.DateTimeField(blank=True, null=True)
     is_active = models.BooleanField(default=False)
 
     class Meta:
+        db_table = 'c_user'
         ordering = ('name',)
+
+    objects = UserManager()
 
     USERNAME_FIELD = 'name'
     REQUIRED_FIELDS = []
@@ -31,24 +43,14 @@ class User(models.Model):
     is_anonymous = False
     is_authenticated = True
 
-    def clean_name(self):
-        name = self.cleaned_data['name']
-        if get_width(name) > 16:
-            raise ValidationError('the name is too long')
-
-    def is_nimda(self):
-        return -626 in self.groups
-
     def save(self, *args, **kwargs):
-        if self._state.adding:
-            self.uid = generate_id(6)
-            if self.email and (self.qq or self.line):
-                self.is_active = True
+        if get_width(self.name) > 16:
+            raise ValidationError('the name is too long')
         return super().save(*args, **kwargs)
 
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
-        # del token
+        # TODO del token
         return True
 
     def check_password(self, raw_password):

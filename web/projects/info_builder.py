@@ -3,8 +3,6 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-from europaea.id import generate_pid
-
 CN_SITE_URL = 'http://scp-wiki-cn.wikidot.com'
 EN_SITE_URL = 'http://scp-wiki-cn.wikidot.com'
 
@@ -36,23 +34,13 @@ def fetch_title(url_, url, eng):
     return ele_title.parent.text
 
 
-def get_info(attrs):
-    base = attrs.pop('base')
-    ext = attrs.pop('ext')
-    ver = attrs.pop('ver')
-    category = attrs['category']
-
-    attrs['pid'] = generate_pid(base=base,
-                                pub_date=attrs.pop('pub_date'),
-                                category=category,
-                                version=ver)
-
-    if category//10 > 1:
-        attrs['title'] = base
-        attrs['doc_url'] = None
+def build_info(base, category, ver, ext):
+    if category // 10 > 1:
+        title = base
+        doc_url = None
     else:
-        attrs['doc_url'] = base
-        attrs['title'] = f'{base} - '
+        doc_url = base
+        title = f'{base} - '
         primary = re.match('^scp-(?:cn-)?([0-9]{3,4})(?:(-j)|(-ex))?$', base)
         if primary:
             # SCP-000 SCP-000-J SCP-000-EX
@@ -63,7 +51,7 @@ def get_info(attrs):
             elif '-ex' in base:
                 url = 'scp-ex'
             else:
-                page = int(primary.group(1))//1000 + 1
+                page = int(primary.group(1)) // 1000 + 1
                 url = 'scp-series'
             url += '-cn' if 'cn-' in base else ''
             url += f'-{page}/' if page != 1 else '/'
@@ -71,10 +59,10 @@ def get_info(attrs):
             url = 'scp-international/'
         else:
             url = base
-            attrs['title'] = ''
-        attrs['title'] += fetch_title(base, url, category == 11)
+            title = ''
+        title += fetch_title(base, url, category == 11)
 
     if ver > 0:
-        attrs['title'] += f' ({ext})' if ext else f' ({ver})'
+        title += f' ({ext})' if ext else f' ({ver})'
 
-    return attrs
+    return title, doc_url

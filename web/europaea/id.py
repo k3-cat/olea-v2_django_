@@ -11,10 +11,10 @@ def generate_id(k):
     return ''.join(random.choices(ID_ALPHABET, k=k))
 
 
-def generate_pid(base, pub_date, category, version):
+def generate_pid(base, pub_date, category, ver):
     random.seed = sha3_512(f'{base} {pub_date} {category}').digest()
     pid_ = ''.join(random.choices(ID_ALPHABET, k=8))
-    return f'{pid_}{ID_ALPHABET[version]}'
+    return f'{pid_}{ID_ALPHABET[int(ver)]}'
 
 
 def generate_jid(debit, credit, reason, pervious, timestamp):
